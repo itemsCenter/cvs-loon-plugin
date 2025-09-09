@@ -6,7 +6,7 @@
 
 [Script]
 
-http-response ^https?:\/\/(www.)?(cvs)\.com script-path=https://raw.githubusercontent.com/itemsCenter/cvs-loon-plugin/main/index.js,requires-body = true
+http-response ^https?:\/\/(www.)?(cvs)\.com script-path=https://raw.githubusercontent.com/itemsCenter/cvs-loon-plugin/main/index.js, requires-body=true
 
 [MITM]
 
