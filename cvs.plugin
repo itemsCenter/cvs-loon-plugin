@@ -4,6 +4,6 @@
 #!homepage=https://github.com/itemsCenter
 #!author=itemsCenter
 [Script]
-http-response https://www.cvs.com/RETAGPV3/ExtraCare/V2/getCustomerProfile script-path=https://raw.githubusercontent.com/itemsCenter/cvs-loon-plugin/main/index.js,requires-body=1,max-size=0
+http-response https://www.cvs.com/RETAGPV3/ExtraCare/V2/getCustomerProfile script-path=https://raw.githubusercontent.com/itemsCenter/cvs-loon-plugin/refs/heads/main/index.js,requires-body=1,max-size=0
 [MITM]
 hostname = www.cvs.com
