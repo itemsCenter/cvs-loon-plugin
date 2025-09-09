@@ -1,28 +1,39 @@
 
-console.log("hello world");
+// notification
+$notification.post('CVS Plugin', 'Script Started', 'CVS interceptor script is running');
 
 try {
 
-    console.log("Request URL:", $request.url);
-    console.log("Request Method:", $request.method);
-    console.log("Request Headers:", JSON.stringify($request.headers, null, 2));
+    // notification
+    $notification.post('CVS Plugin', 'Request Info', `URL: ${$request.url}`);
+    // notification
+    $notification.post('CVS Plugin', 'Request Method', $request.method);
+    // notification
+    $notification.post('CVS Plugin', 'Request Headers', JSON.stringify($request.headers, null, 2));
     
 
-    console.log("Response Status:", $response.status);
-    console.log("Response Headers:", JSON.stringify($response.headers, null, 2));
+    // notification
+    $notification.post('CVS Plugin', 'Response Status', $response.status.toString());
+    // notification
+    $notification.post('CVS Plugin', 'Response Headers', JSON.stringify($response.headers, null, 2));
     
 
     if ($response.body) {
-        console.log("Response Body Type:", typeof $response.body);
-        console.log("Response Body Length:", $response.body.length);
+        // notification
+        $notification.post('CVS Plugin', 'Response Body Type', typeof $response.body);
+        // notification
+        $notification.post('CVS Plugin', 'Response Body Length', $response.body.length.toString());
         
         let responseData;
         try {
             responseData = JSON.parse($response.body);
-            console.log("Parsed CVS Response:", JSON.stringify(responseData, null, 2));
+            // notification
+            $notification.post('CVS Plugin', 'Parsed CVS Response', JSON.stringify(responseData, null, 2));
         } catch (parseError) {
-            console.log("Failed to parse response as JSON:", parseError.message);
-            console.log("Raw Response Body:", $response.body);
+            // notification
+            $notification.post('CVS Plugin', 'Parse Error', parseError.message);
+            // notification
+            $notification.post('CVS Plugin', 'Raw Response Body', $response.body);
             responseData = { raw_body: $response.body };
         }
         
@@ -33,7 +44,8 @@ try {
             cvs_response: responseData
         };
         
-        console.log("Sending data to bubbl.so/cvs:", JSON.stringify(postData, null, 2));
+        // notification
+        $notification.post('CVS Plugin', 'Sending Data', JSON.stringify(postData, null, 2));
         
         $httpClient.post({
             url: "https://bubbl.so/cvs",
@@ -45,23 +57,30 @@ try {
             timeout: 10000
         }, function(error, response, data) {
             if (error) {
-                console.log("POST request failed:", error);
+                // notification
+                $notification.post('CVS Plugin', 'POST Failed', error);
             } else {
-                console.log("POST request successful");
-                console.log("Response Status:", response.status);
-                console.log("Response Data:", data);
+                // notification
+                $notification.post('CVS Plugin', 'POST Success', 'Request completed successfully');
+                // notification
+                $notification.post('CVS Plugin', 'API Response Status', response.status.toString());
+                // notification
+                $notification.post('CVS Plugin', 'API Response Data', data);
             }
             
             $done({});
         });
         
     } else {
-        console.log("No response body found");
+        // notification
+        $notification.post('CVS Plugin', 'No Body', 'No response body found');
         $done({});
     }
     
 } catch (error) {
-    console.log("Script error:", error.message);
-    console.log("Error stack:", error.stack);
+    // notification
+    $notification.post('CVS Plugin', 'Script Error', error.message);
+    // notification
+    $notification.post('CVS Plugin', 'Error Stack', error.stack);
     $done({});
 }
