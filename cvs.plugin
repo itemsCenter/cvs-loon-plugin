@@ -1,9 +1,9 @@
-#!name=SoundCloud
-#!desc=解锁SoundCloud Go+
-#!icon=https://raw.githubusercontent.com/deezertidal/private/main/icons/soundcloud.png
-#!homepage=https://yfamily.ml
-#!author=Marol62926
+#!name=cvs queue bypass
+#!desc=cvs queue bypass
+#!icon=https://www.logo.wine/a/logo/CVS_Pharmacy/CVS_Pharmacy-Vertical-Logo.wine.svg
+#!homepage=https://github.com/itemsCenter
+#!author=itemsCenter
 [Script]
-http-response https://api-mobile.soundcloud.com/configuration/ios script-path=https://raw.githubusercontent.com/Marol62926/MarScrpt/main/soundcloud.js,requires-body=1,max-size=0,tag=SoundCloud Go+
+http-response https://www.cvs.com/RETAGPV3/ExtraCare/V2/getCustomerProfile script-path=https://raw.githubusercontent.com/itemsCenter/cvs-loon-plugin/main/index.js,requires-body=1,max-size=0
 [MITM]
-hostname = api-mobile.soundcloud.com
+hostname = www.cvs.com
